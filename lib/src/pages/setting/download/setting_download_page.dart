@@ -70,6 +70,7 @@ class _SettingDownloadPageState extends State<SettingDownloadPage> {
               _buildDeleteArchiveFileAfterDownload(),
               _buildRestore(),
               _buildRestoreTasksAutomatically(),
+              _buildEnableTagZHTranslationInComicInfo(),
             ],
           ).withListTileTheme(context),
         ),
@@ -320,6 +321,15 @@ class _SettingDownloadPageState extends State<SettingDownloadPage> {
       subtitle: Text('restoreTasksAutomaticallyHint'.tr),
       value: downloadSetting.restoreTasksAutomatically.value,
       onChanged: downloadSetting.saveRestoreTasksAutomatically,
+    );
+  }
+
+  Widget _buildEnableTagZHTranslationInComicInfo() {
+    return SwitchListTile(
+      title: Text('enableTagZHTranslationInComicInfo'.tr),
+      subtitle: Text('enableTagZHTranslationInComicInfoHint'.tr),
+      value: downloadSetting.enableTagZHTranslationInComicInfo.value,
+      onChanged: downloadSetting.saveEnableTagZHTranslationInComicInfo,
     );
   }
 

@@ -45,7 +45,9 @@ import '../utils/file_util.dart';
 import 'jh_service.dart';
 import 'log.dart';
 import '../utils/snack_util.dart';
+import '../utils/snack_util.dart';
 import 'gallery_download_service.dart';
+import 'tag_translation_service.dart';
 
 ArchiveDownloadService archiveDownloadService = ArchiveDownloadService();
 
@@ -509,6 +511,8 @@ class ArchiveDownloadService extends GetxController with GridBasePageServiceMixi
       return;
     }
 
+    await tagTranslationService.translateTagDatasIfNeeded(galleryDetail.tags.values.flattened.map((galleryTag) => galleryTag.tagData).toList());
+
     EHGalleryComicInfo galleryComicInfo = EHGalleryComicInfo(
       rawTitle: galleryDetail.rawTitle,
       japaneseTitle: galleryDetail.japaneseTitle,
@@ -520,6 +524,7 @@ class ArchiveDownloadService extends GetxController with GridBasePageServiceMixi
       languageAbbreviation: LocaleConsts.language2Abbreviation[galleryDetail.language]?.toLowerCase(),
       tagDatas: galleryDetail.tags.values.flattened.map((galleryTag) => galleryTag.tagData).toList(),
       rating: galleryDetail.realRating,
+      preferTranslatedTags: downloadSetting.enableTagZHTranslationInComicInfo.value,
     );
 
     try {
@@ -1079,12 +1084,11 @@ class ArchiveDownloadService extends GetxController with GridBasePageServiceMixi
   }
 
   Future<void> backupAsCBZ(int gid) async {
-    ArchiveDownloadInfo? archiveDownloadInfo = archiveDownloadInfos[gid];
-    if (archiveDownloadInfo == null) {
+    ArchiveDownloadedData? archive = archives.firstWhereOrNull((a) => a.gid == gid);
+    if (archive == null) {
       return;
     }
 
-    ArchiveDownloadedData archive = archiveDownloadInfo.archive;
     String? path = await FilePicker.platform.saveFile(
       dialogTitle: 'saveAsCBZ'.tr,
       fileName: '${archive.title}.cbz',
@@ -1092,15 +1096,28 @@ class ArchiveDownloadService extends GetxController with GridBasePageServiceMixi
       allowedExtensions: ['cbz'],
     );
 
+    if (path == null) {
       return;
     }
 
     try {
-      await zipDirectory(unpackingDir.path, result);
+      if (archive.isOriginal) {
+        await File(computePackingFileDownloadPath(archive)).copy(path);
+      } else {
+        await zipDirectory(computeArchiveUnpackingPath(archive.title, archive.gid), path);
+      }
     } on Exception catch (e) {
       log.error('Zip archive failed', e);
       snack('error'.tr, 'zipFailed'.tr);
     }
+  }
+
+  Future<void> updateComicInfo(int gid) async {
+    ArchiveDownloadedData? archive = archives.firstWhereOrNull((a) => a.gid == gid);
+    if (archive == null) {
+      return;
+    }
+    await _generateComicInfoInDisk(archive);
   }
 
   // ALL

@@ -323,6 +323,7 @@ class EHGalleryComicInfo extends ComicInfo {
   @override
   final List<TagData> tagDatas;
   final double rating;
+  final bool preferTranslatedTags;
   
   DateTime? _parsedPublishTime;
 
@@ -336,16 +337,16 @@ class EHGalleryComicInfo extends ComicInfo {
   String? get alternateSeries => japaneseTitle;
 
   @override
-  String? get writer => tagDatas.where((tagData) => tagData.namespace == 'artist').map((tagData) => tagData.key).join(',');
+  String? get writer => tagDatas.where((tagData) => tagData.namespace == 'artist').map(_getTagContent).join(',');
 
   @override
-  String? get penciller => tagDatas.where((tagData) => tagData.namespace == 'artist').map((tagData) => tagData.key).join(',');
+  String? get penciller => tagDatas.where((tagData) => tagData.namespace == 'artist').map(_getTagContent).join(',');
 
   @override
   String get genre => category;
 
   @override
-  String? get tags => tagDatas.map((tagData) => '${tagData.namespace}:${tagData.key}').join(',');
+  String? get tags => tagDatas.map(_getFullTagContent).join(',');
 
   @override
   String get web => galleryUrl;
@@ -360,7 +361,7 @@ class EHGalleryComicInfo extends ComicInfo {
   MangaEnum get manga => category == 'Manga' ? MangaEnum.yes : MangaEnum.no;
 
   @override
-  String get characters => tagDatas.where((tagData) => tagData.namespace == 'character').map((tagData) => tagData.key).join(',');
+  String get characters => tagDatas.where((tagData) => tagData.namespace == 'character').map(_getTagContent).join(',');
 
   @override
   AgeRatingEnum get ageRating => category == 'Non-H' ? AgeRatingEnum.kidsToAdults : AgeRatingEnum.adults;
@@ -369,7 +370,7 @@ class EHGalleryComicInfo extends ComicInfo {
   double get communityRating => rating;
   
   @override
-  String get locations => tagDatas.where((tagData) => tagData.namespace == 'location').map((tagData) => tagData.key).join(',');
+  String get locations => tagDatas.where((tagData) => tagData.namespace == 'location').map(_getTagContent).join(',');
 
   @override
   int? get year => _parsedPublishTime?.year;
@@ -391,6 +392,7 @@ class EHGalleryComicInfo extends ComicInfo {
     this.languageAbbreviation,
     required this.tagDatas,
     required this.rating,
+    this.preferTranslatedTags = false,
   }) {
     try {
       _parsedPublishTime = DateFormat('yyyy-MM-dd HH:mm').parse(publishTime);
@@ -452,5 +454,26 @@ class EHGalleryComicInfo extends ComicInfo {
     );
 
     return builder.buildDocument();
+  }
+
+  String _getTagContent(TagData tagData) {
+    if (preferTranslatedTags) {
+      String? key = tagData.tagName;
+      if (key != null && key.isNotEmpty) {
+        return key;
+      }
+    }
+    return tagData.key;
+  }
+
+  String _getFullTagContent(TagData tagData) {
+    if (preferTranslatedTags) {
+      String namespace = tagData.translatedNamespace ?? tagData.namespace;
+      String? key = tagData.tagName;
+      if (key != null && key.isNotEmpty) {
+        return '$namespace:$key';
+      }
+    }
+    return '${tagData.namespace}:${tagData.key}';
   }
 }

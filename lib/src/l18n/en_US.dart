@@ -712,7 +712,11 @@ class en_US {
       'restoredGalleryCount': 'Restored gallery count',
       'restoredArchiveCount': 'Restored archive count',
       'restoreTasksAutomatically': 'Restore Tasks Automatically',
-      'restoreTasksAutomaticallyHint': 'Restore tasks automatically when app launched',
+      'restoreTasksAutomaticallyHint': 'Restore download tasks automatically when app starts',
+      'enableTagZHTranslationInComicInfo': 'Save Chinese Tags to ComicInfo',
+      'enableTagZHTranslationInComicInfoHint': 'Will use translated tags in ComicInfo.xml if available',
+
+      /// EH Settings
       'brokenDownloadPathHint': 'Seems your download path is broken, download function may be ineffective',
       'brokenExtraScanPathHint': 'Seems your default local gallery path is broken, local gallery may be not recognized',
       'useJH2UpdateGallery': 'Use JH server to accelerate gallery updates',

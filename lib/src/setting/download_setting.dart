@@ -32,6 +32,7 @@ class DownloadSetting with JHLifeCircleBeanWithConfigStorage implements JHLifeCi
   RxBool manageArchiveDownloadConcurrency = true.obs;
   RxBool deleteArchiveFileAfterDownload = true.obs;
   RxBool restoreTasksAutomatically = false.obs;
+  RxBool enableTagZHTranslationInComicInfo = false.obs;
 
   @override
   ConfigEnum get configEnum => ConfigEnum.downloadSetting;
@@ -63,6 +64,7 @@ class DownloadSetting with JHLifeCircleBeanWithConfigStorage implements JHLifeCi
     manageArchiveDownloadConcurrency.value = map['manageArchiveDownloadConcurrency'] ?? manageArchiveDownloadConcurrency.value;
     deleteArchiveFileAfterDownload.value = map['deleteArchiveFileAfterDownload'] ?? deleteArchiveFileAfterDownload.value;
     restoreTasksAutomatically.value = map['restoreTasksAutomatically'] ?? restoreTasksAutomatically.value;
+    enableTagZHTranslationInComicInfo.value = map['enableTagZHTranslationInComicInfo'] ?? enableTagZHTranslationInComicInfo.value;
   }
 
   @override
@@ -83,6 +85,7 @@ class DownloadSetting with JHLifeCircleBeanWithConfigStorage implements JHLifeCi
       'manageArchiveDownloadConcurrency': manageArchiveDownloadConcurrency.value,
       'deleteArchiveFileAfterDownload': deleteArchiveFileAfterDownload.value,
       'restoreTasksAutomatically': restoreTasksAutomatically.value,
+      'enableTagZHTranslationInComicInfo': enableTagZHTranslationInComicInfo.value,
     });
   }
 
@@ -195,6 +198,12 @@ class DownloadSetting with JHLifeCircleBeanWithConfigStorage implements JHLifeCi
   Future<void> saveRestoreTasksAutomatically(bool value) async {
     log.debug('saveRestoreTasksAutomatically:$value');
     restoreTasksAutomatically.value = value;
+    await saveBeanConfig();
+  }
+
+  Future<void> saveEnableTagZHTranslationInComicInfo(bool value) async {
+    log.debug('saveEnableTagZHTranslationInComicInfo:$value');
+    enableTagZHTranslationInComicInfo.value = value;
     await saveBeanConfig();
   }
 
