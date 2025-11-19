@@ -1,6 +1,6 @@
 import 'package:dio/dio.dart';
 import 'package:get/get_rx/src/rx_workers/rx_workers.dart';
-import 'package:jhentai/src/config/jh_api_secret_config.dart';
+import '../config/jh_api_secret_config.dart';
 import 'package:jhentai/src/consts/jh_consts.dart';
 import 'package:jhentai/src/network/eh_request.dart';
 import 'package:jhentai/src/utils/hmac_util.dart';
