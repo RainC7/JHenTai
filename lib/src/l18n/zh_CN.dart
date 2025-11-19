@@ -534,6 +534,7 @@ class zh_CN {
       /// download page
       'local': '本地',
       'delete': '删除',
+      'saveAsCBZ': '另存为CBZ',
       'deleteTask': '仅删除任务',
       'deleteTaskAndImages': '删除任务和图片',
       'reDownload': '重新下载',

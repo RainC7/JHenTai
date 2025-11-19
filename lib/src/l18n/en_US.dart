@@ -535,6 +535,7 @@ class en_US {
       'local': 'Local',
       'reDownload': 'Re-Download',
       'delete': 'Delete',
+      'saveAsCBZ': 'Save as CBZ',
       'deleteTask': 'Delete Task Only',
       'deleteTaskAndImages': 'Delete Task And Images',
       'unlocking': 'Unlocking',

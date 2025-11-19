@@ -5,6 +5,7 @@ import 'package:collection/collection.dart';
 import 'package:dio/dio.dart';
 import 'package:drift/drift.dart';
 import 'package:drift/native.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:get/get_core/src/get_main.dart';
 import 'package:get/get_instance/get_instance.dart';
 import 'package:get/get_rx/get_rx.dart';
@@ -1075,6 +1076,52 @@ class ArchiveDownloadService extends GetxController with GridBasePageServiceMixi
     await _updateArchiveStatus(archive.gid, ArchiveStatus.completed);
 
     _tryWakeWaitingTasks();
+  }
+
+  Future<void> backupAsCBZ(int gid) async {
+    ArchiveDownloadedData? archive = archives.firstWhereOrNull((archive) => archive.gid == gid);
+    if (archive == null) {
+      return;
+    }
+
+    String? result = await FilePicker.platform.saveFile(
+      dialogTitle: 'saveAsCBZ'.tr,
+      fileName: '${_computeArchiveTitle(archive.title)}.cbz',
+      type: FileType.custom,
+      allowedExtensions: ['cbz'],
+    );
+
+    if (result == null) {
+      return;
+    }
+
+    if (!result.endsWith('.cbz')) {
+      result += '.cbz';
+    }
+
+    File packingFile = File(computePackingFileDownloadPath(archive));
+    if (await packingFile.exists()) {
+      try {
+        await packingFile.copy(result);
+      } on Exception catch (e) {
+        log.error('Copy archive failed', e);
+        snack('error'.tr, 'copyFailed'.tr);
+      }
+      return;
+    }
+
+    Directory unpackingDir = Directory(computeArchiveUnpackingPath(archive.title, archive.gid));
+    if (!await unpackingDir.exists()) {
+      snack('error'.tr, 'archiveFileNotExists'.tr);
+      return;
+    }
+
+    try {
+      await zipDirectory(unpackingDir.path, result);
+    } on Exception catch (e) {
+      log.error('Zip archive failed', e);
+      snack('error'.tr, 'zipFailed'.tr);
+    }
   }
 
   // ALL

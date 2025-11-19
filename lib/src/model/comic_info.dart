@@ -1,6 +1,7 @@
 import 'package:collection/collection.dart';
 import 'package:jhentai/src/database/database.dart';
 import 'package:jhentai/src/utils/string_uril.dart';
+import 'package:intl/intl.dart';
 import 'package:xml/xml.dart';
 
 abstract interface class ComicInfo {
@@ -322,6 +323,8 @@ class EHGalleryComicInfo extends ComicInfo {
   @override
   final List<TagData> tagDatas;
   final double rating;
+  
+  DateTime? _parsedPublishTime;
 
   @override
   String get title => rawTitle;
@@ -368,6 +371,15 @@ class EHGalleryComicInfo extends ComicInfo {
   @override
   String get locations => tagDatas.where((tagData) => tagData.namespace == 'location').map((tagData) => tagData.key).join(',');
 
+  @override
+  int? get year => _parsedPublishTime?.year;
+
+  @override
+  int? get month => _parsedPublishTime?.month;
+
+  @override
+  int? get day => _parsedPublishTime?.day;
+
   EHGalleryComicInfo({
     required this.rawTitle,
     this.japaneseTitle,
@@ -379,7 +391,13 @@ class EHGalleryComicInfo extends ComicInfo {
     this.languageAbbreviation,
     required this.tagDatas,
     required this.rating,
-  });
+  }) {
+    try {
+      _parsedPublishTime = DateFormat('yyyy-MM-dd HH:mm').parse(publishTime);
+    } on FormatException catch (_) {
+      _parsedPublishTime = null;
+    }
+  }
 
   @override
   XmlDocument toXmlDocument() {
@@ -391,12 +409,21 @@ class EHGalleryComicInfo extends ComicInfo {
       'ComicInfo',
       nest: () {
         builder.attribute('xmlns:xsi', 'http://www.w3.org/2001/XMLSchema-instance');
-        builder.attribute('xmlns:xsn', 'http://www.w3.org/2001/XMLSchema');
+        builder.attribute('xmlns:xsd', 'http://www.w3.org/2001/XMLSchema');
 
         builder.element('Title', nest: title);
         builder.element('Series', nest: series);
         if (!isEmptyOrNull(alternateSeries)) {
           builder.element('AlternateSeries', nest: alternateSeries);
+        }
+        if (year != null) {
+          builder.element('Year', nest: year);
+        }
+        if (month != null) {
+          builder.element('Month', nest: month);
+        }
+        if (day != null) {
+          builder.element('Day', nest: day);
         }
         if (!isEmptyOrNull(writer)) {
           builder.element('Writer', nest: writer);

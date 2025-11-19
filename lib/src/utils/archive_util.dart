@@ -34,3 +34,15 @@ Future<List<int>> extractGZipArchive(String archivePath) {
     archivePath,
   );
 }
+
+Future<void> zipDirectory(String directoryPath, String zipPath) {
+  return compute(
+    (List<String> paths) async {
+      var encoder = ZipFileEncoder();
+      encoder.create(paths[1]);
+      encoder.addDirectory(Directory(paths[0]));
+      encoder.close();
+    },
+    [directoryPath, zipPath],
+  );
+}
