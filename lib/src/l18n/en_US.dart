@@ -536,6 +536,7 @@ class en_US {
       'reDownload': 'Re-Download',
       'delete': 'Delete',
       'saveAsCBZ': 'Save as CBZ',
+      'updateComicInfo': 'Update ComicInfo',
       'deleteTask': 'Delete Task Only',
       'deleteTaskAndImages': 'Delete Task And Images',
       'unlocking': 'Unlocking',

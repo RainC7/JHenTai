@@ -243,6 +243,14 @@ mixin ArchiveDownloadPageLogicMixin on GetxController
                 handleSaveAsCBZ(archive);
               },
             ),
+          if (archiveDownloadInfo?.archiveStatus == ArchiveStatus.completed)
+            CupertinoActionSheetAction(
+              child: Text('updateComicInfo'.tr),
+              onPressed: () {
+                backRoute();
+                handleUpdateComicInfo(archive);
+              },
+            ),
           CupertinoActionSheetAction(
             child: Text('delete'.tr, style: TextStyle(color: UIConfig.alertColor(context))),
             onPressed: () {
@@ -347,5 +355,9 @@ mixin ArchiveDownloadPageLogicMixin on GetxController
 
   Future<void> handleSaveAsCBZ(ArchiveDownloadedData archive) async {
     return archiveDownloadService.backupAsCBZ(archive.gid);
+  }
+
+  Future<void> handleUpdateComicInfo(ArchiveDownloadedData archive) async {
+    return archiveDownloadService.updateComicInfo(archive.gid);
   }
 }

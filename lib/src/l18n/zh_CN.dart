@@ -535,6 +535,7 @@ class zh_CN {
       'local': '本地',
       'delete': '删除',
       'saveAsCBZ': '另存为CBZ',
+      'updateComicInfo': '更新元数据',
       'deleteTask': '仅删除任务',
       'deleteTaskAndImages': '删除任务和图片',
       'reDownload': '重新下载',

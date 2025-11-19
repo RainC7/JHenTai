@@ -1079,40 +1079,19 @@ class ArchiveDownloadService extends GetxController with GridBasePageServiceMixi
   }
 
   Future<void> backupAsCBZ(int gid) async {
-    ArchiveDownloadedData? archive = archives.firstWhereOrNull((archive) => archive.gid == gid);
-    if (archive == null) {
+    ArchiveDownloadInfo? archiveDownloadInfo = archiveDownloadInfos[gid];
+    if (archiveDownloadInfo == null) {
       return;
     }
 
-    String? result = await FilePicker.platform.saveFile(
+    ArchiveDownloadedData archive = archiveDownloadInfo.archive;
+    String? path = await FilePicker.platform.saveFile(
       dialogTitle: 'saveAsCBZ'.tr,
-      fileName: '${_computeArchiveTitle(archive.title)}.cbz',
+      fileName: '${archive.title}.cbz',
       type: FileType.custom,
       allowedExtensions: ['cbz'],
     );
 
-    if (result == null) {
-      return;
-    }
-
-    if (!result.endsWith('.cbz')) {
-      result += '.cbz';
-    }
-
-    File packingFile = File(computePackingFileDownloadPath(archive));
-    if (await packingFile.exists()) {
-      try {
-        await packingFile.copy(result);
-      } on Exception catch (e) {
-        log.error('Copy archive failed', e);
-        snack('error'.tr, 'copyFailed'.tr);
-      }
-      return;
-    }
-
-    Directory unpackingDir = Directory(computeArchiveUnpackingPath(archive.title, archive.gid));
-    if (!await unpackingDir.exists()) {
-      snack('error'.tr, 'archiveFileNotExists'.tr);
       return;
     }
 
